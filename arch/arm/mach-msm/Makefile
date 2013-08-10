@@ -403,3 +403,5 @@ obj-$(CONFIG_MSM_FAST_BOOT) += fastboot.o
 obj-$(CONFIG_MSM_FIQ) += msm7k_fiq.o
 obj-$(CONFIG_MSM_FIQ) += msm7k_fiq_handler.o
 obj-$(CONFIG_MSM_PBUS) += pbus_support.o
+
+obj-$(CONFIG_ARCH_RANDOM) += early_random.o

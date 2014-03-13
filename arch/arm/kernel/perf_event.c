@@ -41,6 +41,7 @@
  */
 #define ARMPMU_MAX_HWEVENTS		32
 
+static DEFINE_PER_CPU(u32, from_idle);
 static DEFINE_PER_CPU(struct perf_event * [ARMPMU_MAX_HWEVENTS], hw_events);
 static DEFINE_PER_CPU(unsigned long [BITS_TO_LONGS(ARMPMU_MAX_HWEVENTS)], used_mask);
 static DEFINE_PER_CPU(struct pmu_hw_events, cpu_hw_events);
@@ -112,7 +113,11 @@ armpmu_map_cache_event(unsigned (*cache_map)
 static int
 armpmu_map_event(const unsigned (*event_map)[PERF_COUNT_HW_MAX], u64 config)
 {
-	int mapping = (*event_map)[config];
+	int mapping;
+	if (config >= PERF_COUNT_HW_MAX)
+		return -ENOENT;
+	
+	mapping = (*event_map)[config];
 	return mapping == HW_OP_UNSUPPORTED ? -ENOENT : mapping;
 }
 
@@ -337,6 +342,8 @@ validate_event(struct pmu_hw_events *hw_events,
 	struct hw_perf_event fake_event = event->hw;
 	struct pmu *leader_pmu = event->group_leader->pmu;
 
+	if (is_software_event(event))
+		return 1;
 	if (event->pmu != leader_pmu || event->state <= PERF_EVENT_STATE_OFF)
 		return 1;
 
@@ -435,6 +442,16 @@ armpmu_reserve_hardware(struct arm_pmu *armpmu)
 		handle_irq = armpmu_platform_irq;
 	else
 		handle_irq = armpmu->handle_irq;
+
+	if (plat && plat->request_pmu_irq)
+		armpmu->request_pmu_irq = plat->request_pmu_irq;
+	else if (!armpmu->request_pmu_irq)
+		armpmu->request_pmu_irq = armpmu_generic_request_irq;
+
+	if (plat && plat->free_pmu_irq)
+		armpmu->free_pmu_irq = plat->free_pmu_irq;
+	else if (!armpmu->free_pmu_irq)
+		armpmu->free_pmu_irq = armpmu_generic_free_irq;
 
 	irqs = min(pmu_device->num_resources, num_possible_cpus());
 	if (irqs < 1) {
@@ -600,6 +617,24 @@ static void armpmu_enable(struct pmu *pmu)
 	struct arm_pmu *armpmu = to_arm_pmu(pmu);
 	struct pmu_hw_events *hw_events = armpmu->get_hw_events();
 	int enabled = bitmap_weight(hw_events->used_mask, armpmu->num_events);
+	int idx;
+
+	if (__get_cpu_var(from_idle)) {
+		for (idx = 0; idx <= cpu_pmu->num_events; ++idx) {
+			struct perf_event *event = hw_events->events[idx];
+
+			if (!event)
+				continue;
+
+			armpmu->enable(&event->hw, idx, event->cpu);
+		}
+
+		/* Reset bit so we don't needlessly re-enable counters.*/
+		__get_cpu_var(from_idle) = 0;
+	}
+
+	/* So we don't start the PMU before enabling counters after idle. */
+	barrier();
 
 	if (enabled)
 		armpmu->start();
@@ -785,6 +820,11 @@ static int perf_cpu_pm_notifier(struct notifier_block *self, unsigned long cmd,
 	case CPU_PM_ENTER_FAILED:
 	case CPU_PM_EXIT:
 		if (cpu_has_active_perf() && cpu_pmu->reset) {
+			/*
+			 * Flip this bit so armpmu_enable knows it needs
+			 * to re-enable active counters.
+			 */
+			__get_cpu_var(from_idle) = 1;
 			cpu_pmu->reset(NULL);
 			perf_pmu_enable(&cpu_pmu->pmu);
 		}

@@ -147,13 +147,8 @@ static int ion_cma_mmap(struct ion_heap *mapper, struct ion_buffer *buffer,
 	struct device *dev = buffer->heap->priv;
 	struct ion_cma_buffer_info *info = buffer->priv_virt;
 
-
-	if (ION_IS_CACHED(buffer->flags))
-		return dma_mmap_nonconsistent(dev, vma, info->cpu_addr,
-				info->handle, buffer->size);
-	else
-		return dma_mmap_writecombine(dev, vma, info->cpu_addr,
-				info->handle, buffer->size);
+	return dma_mmap_writecombine(dev, vma, info->cpu_addr, info->handle,
+				 buffer->size);
 }
 
 static void *ion_cma_map_kernel(struct ion_heap *heap,

@@ -1333,16 +1333,9 @@ void mem_text_write_kernel_word(unsigned long *addr, unsigned long word)
 }
 EXPORT_SYMBOL(mem_text_write_kernel_word);
 
-volatile  __section(.log.data) int reserved_area = 0;
-
 static void __init map_lowmem(void)
 {
 	struct memblock_region *reg;
-#ifdef CONFIG_UNCACHED_BUF
-	unsigned long uncached_start = (unsigned long)__uncached_track_buf;
-	unsigned long uncached_end = (unsigned long)__end_uncached_track_buf;
-	unsigned long uncached_size = uncached_end - uncached_start;
-#endif
 
 	/* Map all the lowmem memory banks. */
 	for_each_memblock(memory, reg) {
@@ -1384,65 +1377,21 @@ static void __init map_lowmem(void)
 			map.type = MT_MEMORY_RX;
 
 			create_mapping(&map);
-#ifdef CONFIG_UNCACHED_BUF
+
 			map.pfn = __phys_to_pfn(__pa(__arch_info_begin));
 			map.virtual = (unsigned long)__arch_info_begin;
 			map.length = __phys_to_virt(end) -
 				(unsigned long)__arch_info_begin;
 			map.type = MT_MEMORY_RW;
-
-			create_mapping(&map, false);
-
-			map.pfn = __phys_to_pfn(__virt_to_phys(uncached_start));
-			map.virtual = uncached_start;
-			map.length = uncached_size;
-			map.type = MT_DEVICE;
-
-			create_mapping(&map, false);
-
-			map.pfn = __phys_to_pfn(__virt_to_phys(uncached_end));
-			map.virtual = uncached_end;
-			map.length = end - __virt_to_phys(uncached_end);
-			map.type = MT_MEMORY_RW;
-#else
-			map.pfn = __phys_to_pfn(__pa(__arch_info_begin));
-			map.virtual = (unsigned long)__arch_info_begin;
-			map.length = __phys_to_virt(end) -
-				(unsigned long)__arch_info_begin;
-			map.type = MT_MEMORY_RW;
-#endif
 		} else {
 			map.length = end - start;
 			map.type = MT_MEMORY_RW;
 		}
 #else
-#ifdef CONFIG_UNCACHED_BUF
-		if ((__pa(uncached_start) > start) && (__pa(uncached_end) < end)) {
-			map.pfn = __phys_to_pfn(start);
-			map.virtual = __phys_to_virt(start);
-			map.length = uncached_start - map.virtual;
-			map.type = MT_MEMORY;
-			create_mapping(&map, false);
-
-			map.pfn = __phys_to_pfn(__virt_to_phys(uncached_start));
-			map.virtual = uncached_start;
-			map.length = uncached_size;
-			map.type = MT_DEVICE;
-			create_mapping(&map, false);
-
-			map.pfn = __phys_to_pfn(__virt_to_phys(uncached_end));
-			map.virtual = uncached_end;
-			map.length = end - __virt_to_phys(uncached_end);
-			map.type = MT_MEMORY;
-		} else {
+		map.length = end - start;
+		map.type = MT_MEMORY;
 #endif
-			map.length = end - start;
-			map.type = MT_MEMORY;
 
-#ifdef CONFIG_UNCACHED_BUF
-		}
-#endif
-#endif
 		create_mapping(&map);
 	}
 }

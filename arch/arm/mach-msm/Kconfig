@@ -1356,7 +1356,7 @@ config MSM_RPC_SDIO_XPRT
 	help
 	  SDIO Transport Layer for RPC Rouer
 
-	  config MSM_RPC_SDIO_DEBUG
+config MSM_RPC_SDIO_DEBUG
 
 	depends on MSM_RPC_SDIO_XPRT
 	default y
@@ -2257,7 +2257,7 @@ config MSM_RUN_QUEUE_STATS
          on when to switch off/on the other cores.
 
 config MSM_SM_EVENT
-	bool "Enable system event monitor
+	bool "Enable system event monitor"
 	select UNCACHED_BUF
 	default n
 

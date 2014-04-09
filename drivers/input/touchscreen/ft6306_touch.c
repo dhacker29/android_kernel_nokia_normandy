@@ -2333,8 +2333,9 @@ static ssize_t ft6306_virtual_keys_show(struct kobject *kobj, struct kobj_attrib
 	}
 	#endif
 		return sprintf(buf,
-	__stringify(EV_KEY) ":" __stringify(KEY_BACK) ":240:900:50:50"
-
+	__stringify(EV_KEY) ":" __stringify(KEY_HOME) ":120:900:50:50"
+	":" __stringify(EV_KEY) ":" __stringify(KEY_BACK) ":240:900:50:50"
+	":" __stringify(EV_KEY) ":" __stringify(KEY_MENU) ":360:900:50:50"
 	"\n");
 
 }

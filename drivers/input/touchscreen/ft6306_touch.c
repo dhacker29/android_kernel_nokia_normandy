@@ -1,7 +1,7 @@
-/* 
+/*
  * drivers/input/touchscreen/ft6306_touch.c
  *
- * FocalTech ft6306 TouchScreen driver. 
+ * FocalTech ft6306 TouchScreen driver.
  *
  * Copyright (c) 2010  Focal tech Ltd.
  *
@@ -16,8 +16,8 @@
  *
  *	VERSION		DATE			AUTHOR			NOTE
  *	1.0		2010-01-05		WenFS		only support mulititouch
-  *	2.0		2012-03-22		David.Wang	add factory mode 
- * 
+  *	2.0		2012-03-22		David.Wang	add factory mode
+ *
  */
 
 
@@ -194,7 +194,7 @@ static int ft6306_i2c_rxdata(char *rxdata, int length)
 	ret = i2c_transfer(this_client->adapter, msgs, 2);
 	if (ret < 0)
 		pr_err("touch msg %s i2c read error: %d\n", __func__, ret);
-	
+
 	return ret;
 }
 
@@ -231,7 +231,7 @@ static int ft6306_write_reg(u8 addr, u8 para)
 		pr_err("write reg failed! %#x ret: %d", buf[0], ret);
 		return -1;
 	}
-    
+
 	return 0;
 }
 
@@ -263,7 +263,7 @@ static int ft6306_read_reg(u8 addr, u8 *pdata)
 
 	*pdata = buf[0];
 	return ret;
-  
+
 }
 /*get the tp's id*/
 static void ft6306_tp_id(void)
@@ -272,7 +272,7 @@ static void ft6306_tp_id(void)
 	{
 		pr_err("%s ERROR: could not read register\n", __FUNCTION__);
 	}
-	else 
+	else
 	{
 		if (ft6306_tp_type_id == 0xA8)
 		{
@@ -352,7 +352,7 @@ void delay_qt_ms(unsigned long  w_ms)
 
 
 /*
-[function]: 
+[function]:
     callback: read data from ctpm by i2c interface,implemented by special user;
 [parameters]:
     bt_ctpm_addr[in]    :the address of the ctpm;
@@ -365,7 +365,7 @@ void delay_qt_ms(unsigned long  w_ms)
 FTS_BOOL i2c_read_interface(FTS_BYTE bt_ctpm_addr, FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
 {
 	int ret;
-    
+
 	ret=i2c_master_recv(this_client, pbt_buf, dw_lenth);
 
 	if(ret<=0)
@@ -373,12 +373,12 @@ FTS_BOOL i2c_read_interface(FTS_BYTE bt_ctpm_addr, FTS_BYTE* pbt_buf, FTS_DWRD d
 		DBUG(printk("[TSP]i2c_read_interface error\n");)
 		return FTS_FALSE;
 	}
-  
+
 	return FTS_TRUE;
 }
 
 /*
-[function]: 
+[function]:
     callback: write data to ctpm by i2c interface,implemented by special user;
 [parameters]:
     bt_ctpm_addr[in]    :the address of the ctpm;
@@ -402,13 +402,13 @@ FTS_BOOL i2c_write_interface(FTS_BYTE bt_ctpm_addr, FTS_BYTE* pbt_buf, FTS_DWRD 
 }
 
 /*
-[function]: 
+[function]:
     send a command to ctpm.
 [parameters]:
     btcmd[in]        :command code;
-    btPara1[in]    :parameter 1;    
-    btPara2[in]    :parameter 2;    
-    btPara3[in]    :parameter 3;    
+    btPara1[in]    :parameter 1;
+    btPara2[in]    :parameter 2;
+    btPara3[in]    :parameter 3;
     num[in]        :the valid input parameter numbers, if only command code needed and no parameters followed,then the num is 1;    
 [return]:
     FTS_TRUE    :success;
@@ -426,11 +426,11 @@ FTS_BOOL cmd_write(FTS_BYTE btcmd,FTS_BYTE btPara1,FTS_BYTE btPara2,FTS_BYTE btP
 }
 
 /*
-[function]: 
+[function]:
     write data to ctpm , the destination address is 0.
 [parameters]:
     pbt_buf[in]    :point to data buffer;
-    bt_len[in]        :the data numbers;    
+    bt_len[in]        :the data numbers;
 [return]:
     FTS_TRUE    :success;
     FTS_FALSE    :io fail;
@@ -441,11 +441,11 @@ FTS_BOOL byte_write(FTS_BYTE* pbt_buf, FTS_DWRD dw_len)
 }
 
 /*
-[function]: 
+[function]:
     read out data from ctpm,the destination address is 0.
 [parameters]:
     pbt_buf[out]    :point to data buffer;
-    bt_len[in]        :the data numbers;    
+    bt_len[in]        :the data numbers;
 [return]:
     FTS_TRUE    :success;
     FTS_FALSE    :io fail;
@@ -457,11 +457,11 @@ FTS_BOOL byte_read(FTS_BYTE* pbt_buf, FTS_BYTE bt_len)
 
 
 /*
-[function]: 
+[function]:
     burn the FW to ctpm.
 [parameters]:(ref. SPEC)
     pbt_buf[in]    :point to Head+FW ;
-    dw_lenth[in]:the length of the FW + 6(the Head length);    
+    dw_lenth[in]:the length of the FW + 6(the Head length);
     bt_ecc[in]    :the ECC of the FW
 [return]:
     ERR_OK        :no error;
@@ -499,8 +499,8 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
      /*write 0x55 to register 0xfc*/
     ft6306_write_reg(0xbc,0x55);
     printk("[TSP] Step 1: Reset CTPM test, bin-length=%d\n",dw_lenth);
-   
-    msleep(30);  
+
+    msleep(30);
 
 
     /*********Step 2:Enter upgrade mode *****/
@@ -513,7 +513,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
         msleep(5);
     }while(i_ret <= 0 && i < 5 );
 
-    /*********Step 3:check READ-ID***********************/        
+    /*********Step 3:check READ-ID***********************/
     cmd_write(0x90,0x00,0x00,0x00,4);
     byte_read(reg_val,2);
     if (reg_val[0] == 0x79 && reg_val[1] == 0x8)
@@ -523,7 +523,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
     }
     else
     {
-    	printk("%s: ERR_READID, ID1 = 0x%x,ID2 = 0x%x\n", __func__,reg_val[0],reg_val[1]);
+        printk("%s: ERR_READID, ID1 = 0x%x,ID2 = 0x%x\n", __func__,reg_val[0],reg_val[1]);
         //return ERR_READID;
         //i_is_new_protocol = 1;
     }
@@ -534,7 +534,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
 
      /*********Step 4:erase app*******************************/
     cmd_write(0x61,0x00,0x00,0x00,1);
-   
+
     msleep(1500);
     cmd_write(0x63,0x00,0x00,0x00,1);
     msleep(100);
@@ -559,10 +559,10 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
 
         for (i=0;i<FTS_PACKET_LENGTH;i++)
         {
-            packet_buf[6+i] = pbt_buf[j*FTS_PACKET_LENGTH + i]; 
+            packet_buf[6+i] = pbt_buf[j*FTS_PACKET_LENGTH + i];
             bt_ecc ^= packet_buf[6+i];
         }
-        
+
         byte_write(&packet_buf[0],FTS_PACKET_LENGTH + 6);
         msleep(FTS_PACKET_LENGTH/6 + 1);
         if ((j * FTS_PACKET_LENGTH % 1024) == 0)
@@ -583,11 +583,11 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
 
         for (i=0;i<temp;i++)
         {
-            packet_buf[6+i] = pbt_buf[ packet_number*FTS_PACKET_LENGTH + i]; 
+            packet_buf[6+i] = pbt_buf[ packet_number*FTS_PACKET_LENGTH + i];
             bt_ecc ^= packet_buf[6+i];
         }
 
-        byte_write(&packet_buf[0],temp+6);    
+        byte_write(&packet_buf[0],temp+6);
         msleep(20);
     }
 
@@ -600,10 +600,10 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
         temp =1;
         packet_buf[4] = (FTS_BYTE)(temp>>8);
         packet_buf[5] = (FTS_BYTE)temp;
-        packet_buf[6] = pbt_buf[ dw_lenth + i]; 
+        packet_buf[6] = pbt_buf[ dw_lenth + i];
         bt_ecc ^= packet_buf[6];
 
-        byte_write(&packet_buf[0],7);  
+        byte_write(&packet_buf[0],7);
         msleep(20);
     }
 
@@ -614,7 +614,7 @@ E_UPGRADE_ERR_TYPE  fts_ctpm_fw_upgrade(FTS_BYTE* pbt_buf, FTS_DWRD dw_lenth)
     printk("[TSP] Step 6:  ecc read 0x%x, new firmware 0x%x. \n", reg_val[0], bt_ecc);
     if(reg_val[0] != bt_ecc)
     {
-    	printk("%s: ERR_ECC\n", __func__);
+        printk("%s: ERR_ECC\n", __func__);
         return ERR_ECC;
     }
 
@@ -633,7 +633,7 @@ int fts_ctpm_auto_clb(void)
 
 	printk("[FTS] start auto CLB.\n");
 	msleep(200);
-	ft6306_write_reg(0, 0x40);  
+	ft6306_write_reg(0, 0x40);
 	delay_qt_ms(100);   //make sure already enter factory mode
 	ft6306_write_reg(2, 0x4);  //write command to start calibration
 	delay_qt_ms(300);
@@ -646,16 +646,16 @@ int fts_ctpm_auto_clb(void)
 		}
 		delay_qt_ms(200);
 		printk("[FTS] waiting calibration %d\n",i);
-        
+
 	}
 	printk("[FTS] calibration OK.\n");
-    
+
 	msleep(300);
 	ft6306_write_reg(0, 0x40);  //goto factory mode
 	delay_qt_ms(100);   //make sure already enter factory mode
 	ft6306_write_reg(2, 0x5);  //store CLB result
 	delay_qt_ms(300);
-	ft6306_write_reg(0, 0x0); //return to normal mode 
+	ft6306_write_reg(0, 0x0); //return to normal mode
 	msleep(300);
 	printk("[FTS] store CLB result OK.\n");
 	return 0;
@@ -674,7 +674,7 @@ static ssize_t ft6306_tpfwver_show(struct device *dev, struct device_attribute *
 	DBUG4(printk("[%s]: Enter!\n", __func__);)
 	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
 	data = (struct ft6306_touch_data *) i2c_get_clientdata( client );
-	
+
 	mutex_lock(&data->device_mode_mutex);
 	if(ft6306_read_reg(FT6306_REG_FW_VER, &fwver) < 0)
 		num_read_chars = snprintf(buf, PAGE_SIZE, "get tp fw version fail!\n");
@@ -693,7 +693,7 @@ static ssize_t ft6306_tpfwver_store(struct device *dev,
 	return -EPERM;
 }
 /***********************************
-  set or read the report rate 
+  set or read the report rate
 ************************************/
 static ssize_t ft6306_tprwreg_show(struct device *dev,	struct device_attribute *attr, char *buf)
 {
@@ -713,12 +713,12 @@ static ssize_t ft6306_tprwreg_store(struct device *dev,	struct device_attribute 
 	u8 valbuf[5];
 
 	data = (struct ft6306_touch_data *) i2c_get_clientdata( client );
-	
+
 	DBUG(printk("[%s]: Enter!\n", __func__);)
-	
+
 	memset(valbuf, 0, sizeof(valbuf));
 	mutex_lock(&data->device_mode_mutex);
-	
+
 	num_read_chars = count - 1;
 	if(num_read_chars!=2)
 	{
@@ -728,18 +728,18 @@ static ssize_t ft6306_tprwreg_store(struct device *dev,	struct device_attribute 
 			goto error_return;
 		}
 	}
-	
+
 	memcpy(valbuf, buf, num_read_chars);
 	#if 0
 	retval = strict_strtoul(valbuf, 16, &wmreg);
 	if (0 != retval)
-    	{
-        	pr_err("%s() - ERROR: Could not convert the given input to a number. The given input was: \"%s\"\n", __FUNCTION__, buf);
-        	goto error_return;
-    	}
+        {
+            pr_err("%s() - ERROR: Could not convert the given input to a number. The given input was: \"%s\"\n", __FUNCTION__, buf);
+            goto error_return;
+        }
 	#endif
 	DBUG4(printk("[%s]:valbuf=%s wmreg=%x\n", __func__, valbuf, wmreg);)
-	
+
 	if(2 == num_read_chars)
 	{
 		/*read the register at regaddr, report rate*/
@@ -769,14 +769,14 @@ static int ft6306_GetFirmwareSize(char * firmware_name)
 {
 	struct file* pfile = NULL;
 	struct inode *inode;
-	unsigned long magic; 
-	off_t fsize = 0; 
+	unsigned long magic;
+	off_t fsize = 0;
 	char filepath[128];
 	memset(filepath, 0, sizeof(filepath));
 	DBUG(printk("[%s]: Enter!\n", __func__);)
-	
+
 	sprintf(filepath, "%s", firmware_name);///mnt/sdcard
-	
+
 	pr_info("filepath=%s\n", filepath);
 	if(NULL == pfile){
 		pfile = filp_open(filepath, O_RDONLY, 0);
@@ -785,9 +785,9 @@ static int ft6306_GetFirmwareSize(char * firmware_name)
 		pr_err("error occured while opening file %s.\n", filepath);
 		return -1;
 	}
-	inode=pfile->f_dentry->d_inode; 
+	inode=pfile->f_dentry->d_inode;
 	magic=inode->i_sb->s_magic;
-	fsize=inode->i_size; 
+	fsize=inode->i_size;
 	filp_close(pfile, NULL);
 	DBUG4(printk("[%s]: fsize = %d!\n", __func__, fsize);)
 	return fsize;
@@ -797,16 +797,16 @@ static int ft6306_ReadFirmware(char * firmware_name, unsigned char * firmware_bu
 {
 	struct file* pfile = NULL;
 	struct inode *inode;
-	unsigned long magic; 
-	off_t fsize; 
+	unsigned long magic;
+	off_t fsize;
 	char filepath[128];
 	loff_t pos;
 	mm_segment_t old_fs;
 
 	memset(filepath, 0, sizeof(filepath));
-	
+
 	DBUG(printk("[%s]: Enter!\n", __func__);)
-	
+
 	sprintf(filepath, "%s", firmware_name);///mnt/sdcard/
 	//pr_info("filepath=%s\n", filepath);
 	if(NULL == pfile){
@@ -817,9 +817,9 @@ static int ft6306_ReadFirmware(char * firmware_name, unsigned char * firmware_bu
 		printk("[%s]: Can not open the app!\n", __func__);
 		return -1;
 	}
-	inode=pfile->f_dentry->d_inode; 
+	inode=pfile->f_dentry->d_inode;
 	magic=inode->i_sb->s_magic;
-	fsize=inode->i_size; 
+	fsize=inode->i_size;
 	DBUG4(printk("[%s]: fsize = %d!\n", __func__, fsize);)
 	old_fs = get_fs();
 	set_fs(KERNEL_DS);
@@ -836,7 +836,7 @@ static int ft6306_ReadFirmware(char * firmware_name, unsigned char * firmware_bu
 int fts_ctpm_fw_upgrade_with_app_file(char * firmware_name)
 {
 	FTS_BYTE*     pbt_buf = FTS_NULL;
-	int i_ret; 
+	int i_ret;
 	u8 fwver,file_id;
 	u8 buf[128];
 	u8 reg_val[2] = {0};
@@ -861,7 +861,7 @@ int fts_ctpm_fw_upgrade_with_app_file(char * firmware_name)
 
           file_id=pbt_buf[fwsize-1];
           printk("[TSP] firmware_file_id=0x%x\n",file_id);
-     
+
          /*********Step 1:Reset  CTPM *****/
          /*write 0xaa to register 0xfc*/
          for (i = 0; i < FTS_UPGRADE_LOOP; i++) {
@@ -870,9 +870,9 @@ int fts_ctpm_fw_upgrade_with_app_file(char * firmware_name)
           /*write 0x55 to register 0xfc*/
          ft6306_write_reg(0xbc,0x55);
          printk("[TSP] Step 1: Reset CTPM test, bin-length=%d\n",fwsize);
-        
-         msleep(30);  
-     
+
+         msleep(30);
+
          /*********Step 2:Enter upgrade mode *****/
          auc_i2c_write_buf[0] = 0x55;
          auc_i2c_write_buf[1] = 0xaa;
@@ -882,53 +882,53 @@ int fts_ctpm_fw_upgrade_with_app_file(char * firmware_name)
              i_ret = ft6306_i2c_txdata(auc_i2c_write_buf, 2);
              msleep(5);
          }while(i_ret <= 0 && i < 5 );
-     
-         /*********Step 3:check READ-ID***********************/        
+
+         /*********Step 3:check READ-ID***********************/
          cmd_write(0x90,0x00,0x00,0x00,4);
          byte_read(reg_val,2);
          if (reg_val[0] == 0x79 && reg_val[1] == 0x8)
          {
              printk("[TSP] Step 3: CTPM ID,ID1 = 0x%x,ID2 = 0x%x\n",reg_val[0],reg_val[1]);
-     	break;
+         break;
          }
          else
          {
-         	printk("%s: ERR_READID, ID1 = 0x%x,ID2 = 0x%x\n", __func__,reg_val[0],reg_val[1]);
+             printk("%s: ERR_READID, ID1 = 0x%x,ID2 = 0x%x\n", __func__,reg_val[0],reg_val[1]);
          }
          }
-     
+
          if (i > FTS_UPGRADE_LOOP)
-     	return -EIO;
-    /*********Step 4:read panel id in flash***********************/        
+         return -EIO;
+    /*********Step 4:read panel id in flash***********************/
 	/*set read start address */
 
-    	buf[0] = 0x3;
-    	buf[1] = 0x0;
-    	buf[2] = 0x78;
-    	buf[3] = 0x0;
+        buf[0] = 0x3;
+        buf[1] = 0x0;
+        buf[2] = 0x78;
+        buf[3] = 0x0;
 
         ft6306_i2c_Read(this_client, buf, 4, buf, 128);
         printk("[FTS]panel_factory_id = 0x%x\n",buf[4]);
-	if(buf[4]==file_id)	{
-		
+    if(buf[4]==file_id) {
+
         printk("[TSP] panel_factory_id match with firmware_fie_id\n");
-   	/*call the upgrade function*/
-   	i_ret =  fts_ctpm_fw_upgrade(pbt_buf, fwsize);
-   	if (i_ret != 0)
-   	{
-		pr_err("%s() - ERROR:[FTS] upgrade failed i_ret = %d.\n",__FUNCTION__,  i_ret);
-		//error handling ...
-		//TBD
-   	}
-	else
-   	{
-		pr_info("[FTS] upgrade successfully.\n");
-		if(ft6306_read_reg(FT6306_REG_FW_VER, &fwver) >= 0)
-			pr_info("the new fw ver is 0x%02x\n", fwver);
-		fts_ctpm_auto_clb();  //start auto CLB
-	}
-		}
-	
+        /*call the upgrade function*/
+   	    i_ret =  fts_ctpm_fw_upgrade(pbt_buf, fwsize);
+   	    if (i_ret != 0)
+   	    {
+            pr_err("%s() - ERROR:[FTS] upgrade failed i_ret = %d.\n",__FUNCTION__,  i_ret);
+            //error handling ...
+            //TBD
+        }
+        else
+   	    {
+		    pr_info("[FTS] upgrade successfully.\n");
+		    if(ft6306_read_reg(FT6306_REG_FW_VER, &fwver) >= 0)
+            pr_info("the new fw ver is 0x%02x\n", fwver);
+		    fts_ctpm_auto_clb();  //start auto CLB
+	    }
+    }
+
 	else{
 	/********* reset the new FW***********************/
 	 printk("[TSP] panel_factory_id and firmware_fie_id do not match\n");
@@ -948,7 +948,7 @@ static ssize_t ft6306_fwupgradeapp_show(struct device *dev,	struct device_attrib
 
 static ssize_t ft6306_fwupgradeapp_store(struct device *dev,
 					struct device_attribute *attr,
-					const char *buf, 
+					const char *buf,
 					size_t count)
 {
 	struct ft6306_touch_data *data = NULL;
@@ -985,7 +985,7 @@ static int ft6306_fwupgrade_with_ifile(void)
    FTS_BYTE*     pbt_buf = FTS_NULL;
    FTS_DWRD dw_lenth = 0;
    int i_ret;
-    
+
 	//=========FW upgrade========================*/
 	if (ft6306_tp_type_id == 0x51)
 	{
@@ -1007,7 +1007,7 @@ static int ft6306_fwupgrade_with_ifile(void)
 		printk(KERN_ERR"ft6306_fwupgrade_ifile(),not support this tp.\n");
 		return 1;
 	}
-	
+
 	/*call the upgrade function*/
 	i_ret =  fts_ctpm_fw_upgrade(pbt_buf,sizeof(dw_lenth));
 	if (i_ret != 0)
@@ -1029,7 +1029,7 @@ unsigned char ft6306_get_ifile_ver(void)
 {
 	FTS_BYTE*     pbt_buf = FTS_NULL;
 	FTS_DWRD dw_lenth = 0;
-	
+
 	if (ft6306_tp_type_id == 0x51)
 	{
 		pbt_buf = CTPM_FW_0X51;
@@ -1049,8 +1049,8 @@ unsigned char ft6306_get_ifile_ver(void)
 	{
 		printk(KERN_ERR"ft6306_get_ifile_ver(),not support this tp.\n");
 		return 0xff;
-	}	
-	
+	}
+
     if (dw_lenth > 2)
     {
         return pbt_buf[dw_lenth - 2];
@@ -1060,7 +1060,7 @@ unsigned char ft6306_get_ifile_ver(void)
         //TBD, error handling?
         return 0xff; //default value
     }
-	
+
 }
 
 int ft6306_fwupgrate_ifile(void)
@@ -1073,19 +1073,19 @@ int ft6306_fwupgrate_ifile(void)
     new_ver = ft6306_get_ifile_ver();
 
 	printk(KERN_ERR"ft6306_fwupgrate_ifile():old_ver = 0x%x, new_ver = 0x%x\n",
-		old_ver, 
+		old_ver,
 		new_ver);
-	
+
 	if (new_ver == 0xFF)
 	{
 		return 0;
 	}
-	
-	//if (old_ver < new_ver)  
+
+	//if (old_ver < new_ver)
 	{
 		msleep(100);
 
-		i_ret = ft6306_fwupgrade_with_ifile();   
+		i_ret = ft6306_fwupgrade_with_ifile();
 
 		if (i_ret == 0)
 		{
@@ -1109,42 +1109,42 @@ static ssize_t ft6306_fwupgradeifile_show(struct device *dev,	struct device_attr
 	int  irt = 0;
 	struct ft6306_touch_data *data = NULL;
 	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
-	data = (struct ft6306_touch_data *) i2c_get_clientdata( client );	
+	data = (struct ft6306_touch_data *) i2c_get_clientdata( client );
 
 	disable_irq(client->irq);
 	irt = ft6306_fwupgrate_ifile();
-	enable_irq(client->irq);		
+	enable_irq(client->irq);
 	return -EPERM;
 }
 
 static ssize_t ft6306_fwupgradeifile_store(struct device *dev,
 					struct device_attribute *attr,
-					const char *buf, 
+					const char *buf,
 					size_t count)
 {
 	int  irt = 0;
 	struct ft6306_touch_data *data = NULL;
 	struct i2c_client *client = container_of(dev, struct i2c_client, dev);
-	data = (struct ft6306_touch_data *) i2c_get_clientdata( client );	
+	data = (struct ft6306_touch_data *) i2c_get_clientdata( client );
 
 	disable_irq(client->irq);
 	irt = ft6306_fwupgrate_ifile();
 	enable_irq(client->irq);
-	return count;		
+	return count;
 }
 
 #endif
 
 /*************************
-release touch panel	
+release touch panel
 **************************/
 static void ft6306_touch_release(void)
 {
 	struct ft6306_touch_data *data = i2c_get_clientdata(this_client);
 	/*Disable PRESSUE,modify by Daivd.Wang*/
 	//input_report_abs(data->input_dev, ABS_MT_PRESSURE, 0);
-	
-	input_report_key(data->input_dev, BTN_TOUCH, 0); 
+
+	input_report_key(data->input_dev, BTN_TOUCH, 0);
 	input_mt_sync(data->input_dev);
 	input_sync(data->input_dev);
 
@@ -1157,14 +1157,14 @@ static int ft6306_read_data(void)
 	u8 buf[CFG_POINT_READ_BUF] = {0};
 	int ret = -1;
 	int i;
-	
+
 	ret = ft6306_i2c_rxdata(buf, CFG_POINT_READ_BUF);
     if (ret < 0) {
 		printk("%s read_data i2c_rxdata failed: %d\n", __func__, ret);
 		return ret;
 	}
 	memset(event, 0, sizeof(struct ts_event));
-	event->touch_point = buf[2] & 0x07; 
+	event->touch_point = buf[2] & 0x07;
 
     if (event->touch_point > MAX_TOUCH_POINTS)
     {
@@ -1325,19 +1325,19 @@ static void ft6306_report_value(void)
 			input_report_abs(data->input_dev,
 				ABS_MT_POSITION_X,
 				event->au16_x[i]);
-			
+
 			input_report_abs(data->input_dev,
 				ABS_MT_POSITION_Y,
 				event->au16_y[i]);
-			
+
 			input_report_abs(data->input_dev,
 				ABS_MT_WIDTH_MAJOR,
 				1);
 			input_report_abs(data->input_dev,
 				ABS_MT_TRACKING_ID,
 				event->au8_finger_id[i]);
-			/*Disable PRESSUE,modify by Daivd.Wang*/	
-			#if 0	
+			/*Disable PRESSUE,modify by Daivd.Wang*/
+			#if 0
 			if ((event->au8_touch_event[i]== 0)
 				|| (event->au8_touch_event[i] == 2))
 			{
@@ -1352,7 +1352,7 @@ static void ft6306_report_value(void)
 					0);
 			}
 			#endif
-			input_report_key(data->input_dev, BTN_TOUCH, 1); 
+			input_report_key(data->input_dev, BTN_TOUCH, 1);
 			DBUG(printk("id[%d] = %d, x[%d] = %d, y[%d] = %d \n", i, event->au8_finger_id[i], i, event->au16_x[i], i, event->au16_y[i]);)
 		}
 		else //maybe the touch key area
@@ -1366,10 +1366,10 @@ static void ft6306_report_value(void)
 					event->au8_touch_event[i]);
 			}
 #endif
-		}	    
+		}
 		input_mt_sync(data->input_dev);
 	}
-	
+
 	input_sync(data->input_dev);
 
 	if (event->touch_point == 0)
@@ -1379,29 +1379,29 @@ static void ft6306_report_value(void)
 static void ft6306_touch_pen_irq_work(struct work_struct *work)
 {
 	//int ret = -1;
-	
-	if (ft6306_read_data()== 0)	
-	{	
+
+	if (ft6306_read_data()== 0)
+	{
 		ft6306_report_value();
 	}
 	else
 	{
 		printk("data package read error\n");
 	}
- 	
- 	//enable_irq(this_client->irq);
+
+    //enable_irq(this_client->irq);
 }
 
 static irqreturn_t ft6306_touch_interrupt(int irq, void *dev_id)
 {
 	struct ft6306_touch_data *ft6306_touch = dev_id;
 	DBUG(printk("[%s]: Enter!\n",__func__);)
-#if N_patch		
+#if N_patch
          if(timer_pending(&sto_timer))
          {
              del_timer( &sto_timer);
          }
-#endif		 
+#endif
 	if (!work_pending(&ft6306_touch->pen_event_work)) {
 		queue_work(ft6306_touch->ts_workqueue, &ft6306_touch->pen_event_work);
 	}
@@ -1421,16 +1421,16 @@ static void ft6306_touch_suspend(struct early_suspend *handler)
 	cancel_work_sync(&ts->pen_event_work);
 	flush_workqueue(ts->ts_workqueue);
 	/*added by liukai if find the touch point when suspend release it*/
-	if( event->touch_point != 0) 
+	if( event->touch_point != 0)
 	{
 		printk("[%s]:Find the touchpoint when ft6306 suspend!\n", __func__);
 		event->touch_point = 0;
 		ft6306_touch_release();
 	}
-	/*add end*/
-	/* ==switch to deep sleep mode ==*/ 
+    /*add end*/
+    /* ==switch to deep sleep mode ==*/
    	ft6306_write_reg(FT6306_REG_PMODE, PMODE_HIBERNATE);
-	printk("[%s]: Exit!\n", __func__);
+    printk("[%s]: Exit!\n", __func__);
 }
 
 static void ft6306_touch_resume(struct early_suspend *handler)
@@ -1449,7 +1449,7 @@ static void ft6306_touch_resume(struct early_suspend *handler)
 static DEVICE_ATTR(fwversion, S_IRUGO|S_IWUSR, ft6306_tpfwver_show, ft6306_tpfwver_store);
 /*read and set the report rate*/
 static DEVICE_ATTR(fwrate, S_IRUGO|S_IWUSR, ft6306_tprwreg_show, ft6306_tprwreg_store);
-/*upgrade the tp firmware with app.bin*/ 
+/*upgrade the tp firmware with app.bin*/
 static DEVICE_ATTR(fwupdate, S_IRUGO|S_IWUSR|S_IWGRP, ft6306_fwupgradeapp_show, ft6306_fwupgradeapp_store);
 
 #if CFG_SUPPORT_AUTO_UPG
@@ -1459,9 +1459,9 @@ static struct attribute *ft6306_attributes[] = {
 	&dev_attr_fwversion.attr,
 	&dev_attr_fwrate.attr,
 	&dev_attr_fwupdate.attr,
-#if CFG_SUPPORT_AUTO_UPG	
+#if CFG_SUPPORT_AUTO_UPG
 	&dev_attr_fwupdateifile.attr,
-#endif	
+#endif
 	NULL
 };
 
@@ -1475,10 +1475,10 @@ static struct attribute_group ft6306_attribute_group = {
 /*------------------------------------------------------------------------
 *For FT6306 factory Test
 -------------------------------------------------------------------------*/
-	
+
 //#define FTS_PACKET_LENGTH        128
 #define FTS_SETTING_BUF_LEN        128
-	
+
 #define FTS_TX_MAX				40
 #define FTS_RX_MAX				40
 #define FTS_DEVICE_MODE_REG	0x00
@@ -1487,7 +1487,7 @@ static struct attribute_group ft6306_attribute_group = {
 #define FTS_RAW_READ_REG		0x01
 #define FTS_RAW_BEGIN_REG		0x10
 #define FTS_VOLTAGE_REG		0x05
-	
+
 #define FTS_FACTORYMODE_VALUE		0x40
 #define FTS_WORKMODE_VALUE		0x00
 
@@ -1600,10 +1600,10 @@ static ssize_t ft6306_vendor_show(struct device *dev,
 	{
 		num_read_chars += sprintf(&buf[num_read_chars], "%s","get chip id fail!\n");;
 	}
-	else 
+	else
 	{
-		num_read_chars += sprintf(&buf[num_read_chars], "Chip ID = 0x%02X\n", id_type);	
-	}	
+		num_read_chars += sprintf(&buf[num_read_chars], "Chip ID = 0x%02X\n", id_type);
+	}
 
 	return num_read_chars;
 }
@@ -1738,13 +1738,13 @@ static int ft6306_ft_read_rawdata(u16 rawdata[][FTS_RX_MAX],
 		}
 		k = 0;
 		for (j = 0; j < rx*2; j += 2)
-        	{
+        {
 			dataval  = read_buffer[j];
 			dataval  = (dataval << 8);
 			dataval |= read_buffer[j+1];
 			rawdata[i][k] = dataval;
 			k++;
-        	}
+        }
 	}
 
 	return 0;
@@ -1765,7 +1765,7 @@ static ssize_t ft6306_ft_rawdata_show(struct device *dev,
 	//mutex_lock(&g_device_mutex);
 	/*entry factory*/
 	err = ft6306_ft_write_reg(FTS_DEVICE_MODE_REG, FTS_FACTORYMODE_VALUE);
-	if (err < 0) 
+	if (err < 0)
 	{
 		num_read_chars = sprintf(buf,"%s:rawdata show error!\n", __func__);
 		goto RAW_ERROR;
@@ -1773,7 +1773,7 @@ static ssize_t ft6306_ft_rawdata_show(struct device *dev,
 
 	/*get rx and tx num*/
 	err = ft6306_ft_read_reg(FTS_TXNUM_REG, &tx);
-	if (err < 0) 
+	if (err < 0)
 	{
 		num_read_chars = sprintf(buf,"%s:get tx error!\n", __func__);
 		goto RAW_ERROR;
@@ -1839,7 +1839,7 @@ static ssize_t ft6306_ft_diffdata_show(struct device *dev,
 	//mutex_lock(&g_device_mutex);
 	/*entry factory*/
 	err = ft6306_ft_write_reg(FTS_DEVICE_MODE_REG, FTS_FACTORYMODE_VALUE);
-	if (err < 0) 
+	if (err < 0)
 	{
 		num_read_chars = sprintf(buf,"%s:rawdata show error!\n", __func__);
 		goto RAW_ERROR;
@@ -1847,13 +1847,13 @@ static ssize_t ft6306_ft_diffdata_show(struct device *dev,
 
 	/*get rx and tx num*/
 	err = ft6306_ft_read_reg(FTS_TXNUM_REG, &tx);
-	if (err < 0) 
+	if (err < 0)
 	{
 		num_read_chars = sprintf(buf,"%s:get tx error!\n", __func__);
 		goto RAW_ERROR;
 	}
 	err = ft6306_ft_read_reg(FTS_RXNUM_REG, &rx);
-	if (err < 0) 
+	if (err < 0)
 	{
 		num_read_chars = sprintf(buf,"%s:get rx error!\n", __func__);
 		goto RAW_ERROR;
@@ -1862,30 +1862,30 @@ static ssize_t ft6306_ft_diffdata_show(struct device *dev,
 	num_read_chars += sprintf(&(buf[num_read_chars]),"Delta data:\n");
 	/*get rawdata*/
 	err = ft6306_ft_read_rawdata(before_rawdata, tx, rx);
-	if (err < 0) 
+	if (err < 0)
 	{
 		num_read_chars = sprintf(buf,"%s:diffdata show error!\n", __func__);
 		goto RAW_ERROR;
-	} 
+	}
 
 	/*get original voltage and change it to get new frame rawdata*/
 	err = ft6306_ft_read_reg(FTS_VOLTAGE_REG, &regvalue);
-	if (err < 0) 
+	if (err < 0)
 	{
 		num_read_chars = sprintf(buf,"%s:get original voltage error!\n", __func__);
 		goto RAW_ERROR;
-	} 
-	else 
+	}
+	else
 	{
 		orig_vol = regvalue;
 	}
-	
+
 	if (orig_vol <= 1)
 	{
-    		regvalue = orig_vol + 2;
+        regvalue = orig_vol + 2;
 	}
-	else 
-	{			
+	else
+	{
 		if(orig_vol >= 4)
 		{
 			regvalue = 1;
@@ -1899,18 +1899,18 @@ static ssize_t ft6306_ft_diffdata_show(struct device *dev,
 		regvalue = 7;
 	if (regvalue <= 0)
 		regvalue = 0;
-	#if 0	
+	#if 0
 	num_read_chars += sprintf(&(buf[num_read_chars]),
 		"original voltage: %u changed voltage:%u\n",
 		orig_vol, regvalue);
 	#endif
 	err = ft6306_ft_write_reg(FTS_VOLTAGE_REG, regvalue);
-	if (err < 0) 
+	if (err < 0)
 	{
 		num_read_chars = sprintf(buf,"%s:set original voltage error!\n", __func__);
 		goto RAW_ERROR;
 	}
-	
+
 	/*get rawdata*/
 	for (i=0; i<3; i++)
 		err = ft6306_ft_read_rawdata(after_rawdata, tx, rx);
@@ -1931,7 +1931,7 @@ static ssize_t ft6306_ft_diffdata_show(struct device *dev,
 			//buf[num_read_chars-1] = '\n';
 		}
 	}
-	
+
 RETURN_ORIG_VOLTAGE:
 	err = ft6306_ft_write_reg(FTS_VOLTAGE_REG, orig_vol);
 	if (err < 0)
@@ -1944,7 +1944,7 @@ RAW_ERROR:
 		dev_err(&this_client->dev,"%s:enter work error!\n", __func__);
 	msleep(100);
 	//mutex_unlock(&g_device_mutex);
-	
+
 	return num_read_chars;
 }
 static ssize_t ft6306_ft_diffdata_store(struct device *dev,
@@ -1988,9 +1988,9 @@ static ssize_t ft6306_ft_setrawrange_show(struct device *dev,
 	num_read_chars = sprintf(buf,
 				"min rawdata:%d max rawdata:%d\n",
 				g_min_rawdata, g_max_rawdata);
-	
+
 	//mutex_unlock(&g_device_mutex);
-	
+
 	return num_read_chars;
 }
 
@@ -2041,7 +2041,7 @@ static ssize_t ft6306_ft_setdiffrange_show(struct device *dev,
 				"min diffdata:%d max diffdata:%d\n",
 				g_min_diffdata, g_max_diffdata);
 	//mutex_unlock(&g_device_mutex);
-	
+
 	return num_read_chars;
 }
 
@@ -2092,7 +2092,7 @@ static ssize_t ft6306_ft_setvoltagelevel_show(struct device *dev,
 	//mutex_lock(&g_device_mutex);
 	num_read_chars = sprintf(buf, "voltage level:%d\n", g_voltage_level);
 	//mutex_unlock(&g_device_mutex);
-	
+
 	return num_read_chars;
 }
 
@@ -2127,7 +2127,7 @@ static ssize_t ft6306_ft_setvoltagelevel_store(struct device *dev,
 		goto error_return;
 	}
 	g_voltage_level = wmreg;
-	
+
 error_return:
 	//mutex_unlock(&g_device_mutex);
 
@@ -2223,66 +2223,66 @@ static int ft6306_touch_sysfs_init(void)
 		ret = -ENOMEM;
 		return ret;
 	}
-#if 0	
+#if 0
 	ret = sysfs_create_file(android_touch_ftobj, &dev_attr_version.attr);
-	if (ret) 
+	if (ret)
 	{
 		printk(KERN_ERR "TOUCH_ERR: create_file version failed\n");
 		return ret;
 	}
 #endif
 	ret = sysfs_create_file(android_touch_ftobj, &dev_attr_vendor.attr);
-	if (ret) 
+	if (ret)
 	{
 		printk(KERN_ERR "TOUCH_ERR: create_file chip vendor failed\n");
 		return ret;
 	}
-#if 0	
+#if 0
 	ret = sysfs_create_file(android_touch_ftobj, &dev_attr_rawdata.attr);
-	if (ret) 
+	if (ret)
 	{
 		printk(KERN_ERR "TOUCH_ERR: create_file rawdata failed\n");
 		return ret;
 	}
 
 	ret = sysfs_create_file(android_touch_ftobj, &dev_attr_diffdata.attr);
-	if (ret) 
+	if (ret)
 	{
 		printk(KERN_ERR "TOUCH_ERR: create_file diffdata failed\n");
 		return ret;
 	}
 	ret = sysfs_create_file(android_touch_ftobj, &dev_attr_diag.attr);
-	if (ret) 
+	if (ret)
 	{
 		printk(KERN_ERR "TOUCH_ERR: create_file diag failed\n");
 		return ret;
 	}
-#endif	
+#endif
 	ret = sysfs_create_file(android_touch_ftobj, &dev_attr_setraw.attr);
-	if (ret) 
+	if (ret)
 	{
 		printk(KERN_ERR "TOUCH_ERR: create_file setraw failed\n");
 		return ret;
 	}
 	ret = sysfs_create_file(android_touch_ftobj, &dev_attr_setdiffdata.attr);
-	if (ret) 
+	if (ret)
 	{
 		printk(KERN_ERR "TOUCH_ERR: create_file setdiffdata failed\n");
 		return ret;
 	}
 	ret = sysfs_create_file(android_touch_ftobj, &dev_attr_setvol.attr);
-	if (ret) 
+	if (ret)
 	{
 		printk(KERN_ERR "TOUCH_ERR: create_file setvol failed\n");
 		return ret;
 	}
-	
+
 	ret = sysfs_create_file(android_touch_ftobj, &dev_attr_rwreg.attr);
-	if (ret) 
+	if (ret)
 	{
 		printk(KERN_ERR "TOUCH_ERR: create_file rwreg failed\n");
 		return ret;
-	}	
+	}
 	return 0;
 }
 
@@ -2305,7 +2305,7 @@ static void ft6306_touch_sysfs_deinit(void)
 -----------------------------------------------------------------------------------*/
 #endif
 /***********************************************************************************************
-	add by liukai for virtualkeys 
+	add by liukai for virtualkeys
 ***********************************************************************************************/
 
 static ssize_t ft6306_virtual_keys_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
@@ -2314,7 +2314,7 @@ static ssize_t ft6306_virtual_keys_show(struct kobject *kobj, struct kobj_attrib
 #if 0
 	if (ft6306_tp_type_id == 0x51)
 	{
-		return sprintf(buf, 
+		return sprintf(buf,
 	__stringify(EV_KEY) ":" __stringify(KEY_BACK) ":124:1000:50:50"
 	":" __stringify(EV_KEY) ":" __stringify(KEY_HOMEPAGE) ":286:1000:50:50"
 	":" __stringify(EV_KEY) ":" __stringify(KEY_MENU) ":398:1000:50:50"
@@ -2322,21 +2322,21 @@ static ssize_t ft6306_virtual_keys_show(struct kobject *kobj, struct kobj_attrib
 	}
 		else if(ft6306_tp_type_id == 0x59)
 	{
-		return sprintf(buf, 
+		return sprintf(buf,
 	__stringify(EV_KEY) ":" __stringify(KEY_BACK) ":240:900:0:20"
-	
-	"\n");	
+
+	"\n");
 	}
 	else
 	{
 		return sprintf(buf, "TP matching failed! type: %02x\n", ft6306_tp_type_id);
 	}
 	#endif
-		return sprintf(buf, 
+		return sprintf(buf,
 	__stringify(EV_KEY) ":" __stringify(KEY_BACK) ":240:900:50:50"
-	
-	"\n");	
-  
+
+	"\n");
+
 }
 
 static struct kobj_attribute ft6306_virtual_keys_attr = {
@@ -2359,13 +2359,13 @@ static struct attribute_group ft6306_properties_attr_group = {
 extern struct kobject * intel_get_properties(void);
 
 
-static int ft6306_virtual_keys_init(void) 
+static int ft6306_virtual_keys_init(void)
 {
-	
+
 	int ret;
 	struct kobject *properties_kobj;
 	properties_kobj = kobject_create_and_add("board_properties", NULL);
-	
+
 	if (!properties_kobj)
 	{
 		printk(KERN_ERR "failed to create board_properties\n");
@@ -2392,7 +2392,7 @@ static int ft6306_virtual_keys_init(void)
 			   __func__, rc);
 		return;
 	}
-		#if 1	
+		#if 1
 	rc= vreg_enable(vreg_gp4);
 	if (rc) {
 		printk(KERN_ERR "%s: vreg enable failed (%d)\n",
@@ -2408,17 +2408,17 @@ static int ft6306_touch_probe(struct i2c_client *client, const struct i2c_device
 	struct ft6306_touch_data *ft6306_touch;
 	struct input_dev *input_dev;
 	int err = 0;
-	unsigned char uc_reg_value; 
+	unsigned char uc_reg_value;
 	//vreg4_init();
 
 	printk( "ft6306_touch_probe--enter\n");
 	ft6306_touch_pdata = client->dev.platform_data;
-	if (ft6306_touch_pdata == NULL) 
+	if (ft6306_touch_pdata == NULL)
 	{
 		dev_err(&client->dev, "%s: platform data is null\n", __func__);
 		goto exit_platform_data_null;
 	}
-	
+
 	/*init RESET pin*/
 	err = gpio_request(ft6306_touch_pdata->reset,"ft6306 reset pin");
 	if (err<0)
@@ -2427,21 +2427,21 @@ static int ft6306_touch_probe(struct i2c_client *client, const struct i2c_device
               0, GPIO_CFG_OUTPUT, GPIO_CFG_PULL_DOWN,
               GPIO_CFG_4MA),
              GPIO_CFG_ENABLE);
-	
+
 	ft6306_chip_reset();
 
 /* Check if the I2C bus supports BYTE transfer */
 	err = i2c_check_functionality(client->adapter,I2C_FUNC_SMBUS_BYTE);
-	if (!err) 
+	if (!err)
 	{
 		dev_err(&client->dev,
 			    "%s adapter not supported\n",
 				dev_driver_string(&client->adapter->dev));
 		goto exit_check_functionality_failed;
 	}
-		
+
 	ft6306_touch = kzalloc(sizeof(*ft6306_touch), GFP_KERNEL);
-	if (!ft6306_touch)	
+	if (!ft6306_touch)
 	{
 		err = -ENOMEM;
 		goto exit_alloc_data_failed;
@@ -2450,21 +2450,21 @@ static int ft6306_touch_probe(struct i2c_client *client, const struct i2c_device
 	this_client = client;
 	i2c_set_clientdata(client, ft6306_touch);
 	mutex_init(&ft6306_touch->device_mode_mutex);
-	
+
 	INIT_WORK(&ft6306_touch->pen_event_work, ft6306_touch_pen_irq_work);
 
 	ft6306_touch->ts_workqueue = create_singlethread_workqueue(dev_name(&client->dev));
-	if (!ft6306_touch->ts_workqueue) 
+	if (!ft6306_touch->ts_workqueue)
 	{
 		err = -ESRCH;
 		goto exit_create_singlethread;
 	}
-	/*init INTERRUPT pin*/	
+	/*init INTERRUPT pin*/
 	if (ft6306_touch_pdata->irq)
 	{
 		//gpio_request(tpdev->pdata->irq, tpdev->client->name);
 		gpio_tlmm_config(GPIO_CFG(ft6306_touch_pdata->irq, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA), GPIO_CFG_ENABLE);
-	} 
+	}
 	if (request_irq(client->irq, ft6306_touch_interrupt,IRQF_TRIGGER_FALLING, FT6306_NAME, ft6306_touch) >= 0)
 	{
 		printk("Received IRQ!\n");
@@ -2472,16 +2472,16 @@ static int ft6306_touch_probe(struct i2c_client *client, const struct i2c_device
 		if (irq_set_irq_wake(tpdev->client->irq, 1) < 0)
 			printk(KERN_ERR "failed to set IRQ wake\n");
 		*/
-	} 
+	}
 
 	input_dev = input_allocate_device();
-	if (!input_dev) 
+	if (!input_dev)
 	{
 		err = -ENOMEM;
 		dev_err(&client->dev, "failed to allocate input device\n");
 		goto exit_input_dev_alloc_failed;
 	}
-	
+
 	ft6306_touch->input_dev = input_dev;
 	set_bit(ABS_MT_POSITION_X, input_dev->absbit);
 	set_bit(ABS_MT_POSITION_Y, input_dev->absbit);
@@ -2508,21 +2508,21 @@ static int ft6306_touch_probe(struct i2c_client *client, const struct i2c_device
 
 	set_bit(EV_KEY, input_dev->evbit);
 	set_bit(EV_ABS, input_dev->evbit);
-	set_bit(BTN_TOUCH, input_dev->keybit);	
+	set_bit(BTN_TOUCH, input_dev->keybit);
 	__set_bit(EV_KEY, input_dev->evbit);
 	__set_bit(KEY_HOME, input_dev->keybit);
-	__set_bit(KEY_MENU, input_dev->keybit);	
+	__set_bit(KEY_MENU, input_dev->keybit);
 
 	msleep(150);
 	/*get the tp module id*/
 	ft6306_tp_id();
-	
+
 	//ft6306_fwupgrate_ifile();
 
 	/*tp's device name*/
 	input_dev->name	= "ft6306";		//dev_name(&client->dev)
 	input_dev->phys = "ft6306";
-	
+
 	/* Initialize virtualkeys */
 	ft6306_virtual_keys_init();
 
@@ -2530,7 +2530,7 @@ static int ft6306_touch_probe(struct i2c_client *client, const struct i2c_device
 
 	/*register the input device*/
 	err = input_register_device(input_dev);
-	if (err) 
+	if (err)
 	{
 		dev_err(&client->dev,
 		"ft6306_touch_probe: failed to register input device: %s\n",
@@ -2548,21 +2548,21 @@ static int ft6306_touch_probe(struct i2c_client *client, const struct i2c_device
 
 	uc_reg_value = ft6306_read_fw_ver();
 	printk("[%s]: Firmware version is 0x%x\n", __func__, uc_reg_value);
-	
+
 	ft6306_read_reg(FT6306_REG_PERIODACTIVE, &uc_reg_value);
 	printk("[%s]: report rate is %dHz.\n", __func__, uc_reg_value * 10);
 
-	if(uc_reg_value != 0xb) 
+	if(uc_reg_value != 0xb)
 	{
 		ft6306_write_reg(FT6306_REG_PERIODACTIVE, 0xb);
 		ft6306_read_reg(FT6306_REG_PERIODACTIVE, &uc_reg_value);
 		printk("[%s]: set report rate to %dHz.\n", __func__, uc_reg_value * 10);
 	}
-	
+
 	ft6306_read_reg(FT6306_REG_THGROUP, &uc_reg_value);
 	printk("[%s]: touch threshold is %d.\n", __func__, uc_reg_value * 4);
-	
-	
+
+
 
 	//create sysfs
 	err = sysfs_create_group(&client->dev.kobj, &ft6306_attribute_group);
@@ -2575,13 +2575,13 @@ static int ft6306_touch_probe(struct i2c_client *client, const struct i2c_device
 	{
 		printk("[%s] - sysfs_create_group() succeeded.\n", __func__);
 	}
-#ifdef __FT6306_FT__	
+#ifdef __FT6306_FT__
 	ft6306_touch_sysfs_init();
 #endif
 #if N_patch
-  //Switch to option vars init.                                                                          
-    sto_back_key_sampling_counter = 0;                                                                     
-    setup_timer(&sto_timer, ft6306_sto_timer_callback, 0);    
+  //Switch to option vars init.
+    sto_back_key_sampling_counter = 0;
+    setup_timer(&sto_timer, ft6306_sto_timer_callback, 0);
 #endif
      DBUG(printk("[%s]: End of probe !\n", __func__);)
 		printk( "ft6306_touch_probe--exit\n");
@@ -2612,9 +2612,9 @@ static int __devexit ft6306_touch_remove(struct i2c_client *client)
 {
 	DBUG(printk("[%s]: Enter!\n", __func__);)
 	struct ft6306_touch_data *ft6306_touch = i2c_get_clientdata(client);
-#ifdef __FT6306_FT__		
+#ifdef __FT6306_FT__
 	ft6306_touch_sysfs_deinit();
-#endif	
+#endif
 	unregister_early_suspend(&ft6306_touch->early_suspend);
 	free_irq(client->irq, ft6306_touch);
 	input_unregister_device(ft6306_touch->input_dev);

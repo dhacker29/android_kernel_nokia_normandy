@@ -1,7 +1,7 @@
-
 menu "NVBK share memory "
 
 config NVBK_SHARE_MEM
+	bool
 	default y
 endmenu
 

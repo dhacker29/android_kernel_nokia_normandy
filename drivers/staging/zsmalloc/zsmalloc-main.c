@@ -425,6 +425,7 @@ static struct page *find_get_zspage(struct size_class *class)
 	return page;
 }
 
+
 static int zs_cpu_notifier(struct notifier_block *nb, unsigned long action,
 				void *pcpu)
 {
@@ -483,7 +484,7 @@ fail:
 
 struct zs_pool *zs_create_pool(const char *name, gfp_t flags)
 {
-	int i, error, ovhd_size;
+	int i, ovhd_size;
 	struct zs_pool *pool;
 
 	if (!name)
@@ -512,13 +513,6 @@ struct zs_pool *zs_create_pool(const char *name, gfp_t flags)
 
 	pool->flags = flags;
 	pool->name = name;
-
-	error = 0; /* Success */
-
-	if (error) {
-		zs_destroy_pool(pool);
-		pool = NULL;
-	}
 
 	return pool;
 }
@@ -743,8 +737,8 @@ u64 zs_get_total_size_bytes(struct zs_pool *pool)
 }
 EXPORT_SYMBOL_GPL(zs_get_total_size_bytes);
 
-MODULE_AUTHOR("Nitin Gupta <ngupta at vflare.org>");
-MODULE_LICENSE("Dual BSD/GPL");
-
 module_init(zs_init);
 module_exit(zs_exit);
+
+MODULE_LICENSE("Dual BSD/GPL");
+MODULE_AUTHOR("Nitin Gupta <ngupta@vflare.org>");

@@ -2757,13 +2757,13 @@ static long msm_ioctl_config(struct file *fp, unsigned int cmd,
 	case MSM_CAM_IOCTL_V4L2_EVT_NOTIFY:
 		rc = msm_v4l2_evt_notify(config_cam->p_mctl, cmd, arg);
 		break;
-
+#if 0
 	case MSM_CAM_IOCTL_SET_MEM_MAP_INFO:
 		if (copy_from_user(&config_cam->mem_map, (void __user *)arg,
 				sizeof(struct msm_mem_map_info)))
 			rc = -EINVAL;
 		break;
-
+#endif
 	default:{
 		/* For the rest of config command, forward to media controller*/
 		struct msm_cam_media_controller *p_mctl = config_cam->p_mctl;
@@ -2780,6 +2780,7 @@ static long msm_ioctl_config(struct file *fp, unsigned int cmd,
 	return rc;
 }
 
+#if 0
 static int msm_mmap_config(struct file *fp, struct vm_area_struct *vma)
 {
 	struct msm_cam_config_dev *config_cam = fp->private_data;
@@ -2813,7 +2814,7 @@ static int msm_mmap_config(struct file *fp, struct vm_area_struct *vma)
 end:
 	return rc;
 }
-
+#endif
 static int msm_open_config(struct inode *inode, struct file *fp)
 {
 	int rc;
@@ -2910,7 +2911,7 @@ static const struct file_operations msm_fops_config = {
 	.open  = msm_open_config,
 	.poll  = msm_poll_config,
 	.unlocked_ioctl = msm_ioctl_config,
-	.mmap	= msm_mmap_config,
+//	.mmap	= msm_mmap_config,
 	.release = msm_close_config,
 };
 

@@ -2256,7 +2256,7 @@ config MSM_RUN_QUEUE_STATS
          on when to switch off/on the other cores.
 
 config MSM_SM_EVENT
-	bool "Enable system event monitor
+	bool "Enable system event monitor"
 	select UNCACHED_BUF
 	default n
 

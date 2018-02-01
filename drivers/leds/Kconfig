@@ -49,6 +49,14 @@ config LEDS_LM3530
 	  LM3530 ambient light sensor chip. This ALS chip can be
 	  controlled manually or using PWM input or using ambient
 	  light automatically.
+	  
+config LEDS_LM3556
+	tristate "LED support for LM3556 Chip"
+	depends on LEDS_CLASS && I2C
+	select REGMAP_I2C
+	help
+  	  This option enables support for LEDs connected to LM3556.
+	  LM3556 includes Torch, Flash and Indicator functions.
 
 config LEDS_LOCOMO
 	tristate "LED Support for Locomo device"
